@@ -7,6 +7,7 @@ interface UseFeedArticlesOptions {
   tagSlug?: string
   limit?: number
   enabled?: boolean
+  query?: string
 }
 
 interface FeedApiResponse {
@@ -14,9 +15,14 @@ interface FeedApiResponse {
   nextPage: number | null
 }
 
-export function useFeedArticles({ tagSlug, limit = 10, enabled = true }: UseFeedArticlesOptions) {
+export function useFeedArticles({
+  tagSlug,
+  limit = 10,
+  enabled = true,
+  query,
+}: UseFeedArticlesOptions) {
   return useInfiniteQuery<FeedApiResponse>({
-    queryKey: ['feed-articles', { tagSlug, limit }],
+    queryKey: ['feed-articles', { tagSlug, limit, query }],
     initialPageParam: 1,
     enabled,
     staleTime: 1000 * 60 * 5,
@@ -25,6 +31,7 @@ export function useFeedArticles({ tagSlug, limit = 10, enabled = true }: UseFeed
       params.set('page', String(pageParam))
       params.set('limit', String(limit))
       if (tagSlug) params.set('tag', tagSlug)
+      if (query) params.set('q', query)
 
       const response = await fetch(`/api/articles?${params.toString()}`)
       if (!response.ok) {

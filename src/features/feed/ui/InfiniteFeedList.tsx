@@ -14,25 +14,9 @@ interface InfiniteFeedListProps {
 
 export function InfiniteFeedList({ tagSlug, limit = 10, query = '' }: InfiniteFeedListProps) {
   const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useFeedArticles({ tagSlug, limit })
+    useFeedArticles({ tagSlug, limit, query })
 
   const articles = useMemo(() => data?.pages.flatMap((page) => page.items) ?? [], [data?.pages])
-  const normalizedQuery = query.trim().toLowerCase()
-  const filteredArticles = useMemo(() => {
-    if (!normalizedQuery) return articles
-    return articles.filter((article) => {
-      const haystack = [
-        article.title,
-        article.summary ?? '',
-        article.author ?? '',
-        ...article.tags.map((tag) => tag.name),
-      ]
-        .join(' ')
-        .toLowerCase()
-
-      return haystack.includes(normalizedQuery)
-    })
-  }, [articles, normalizedQuery])
 
   const { targetRef } = useInfiniteScroll({
     onIntersect: () => {
@@ -63,10 +47,10 @@ export function InfiniteFeedList({ tagSlug, limit = 10, query = '' }: InfiniteFe
 
   return (
     <section className="grid gap-6">
-      {filteredArticles.map((article) => (
+      {articles.map((article) => (
         <ArticleCardClient key={article.id} article={article} />
       ))}
-      {filteredArticles.length === 0 && (
+      {articles.length === 0 && (
         <div className="rounded-2xl border border-gray-100 bg-white p-8 text-center text-sm text-gray-500">
           검색 결과가 없습니다. 다른 키워드로 다시 검색해보세요.
         </div>

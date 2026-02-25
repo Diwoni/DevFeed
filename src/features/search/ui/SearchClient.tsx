@@ -1,10 +1,33 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { InfiniteFeedList } from '@/features/feed/ui/InfiniteFeedList'
 
 export function SearchClient() {
-  const [query, setQuery] = useState('')
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const pathname = usePathname()
+  const initialQuery = searchParams.get('q') ?? ''
+  const [query, setQuery] = useState(initialQuery)
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      const current = searchParams.get('q') ?? ''
+      if (query === current) return
+
+      const nextParams = new URLSearchParams(searchParams)
+      if (query) {
+        nextParams.set('q', query)
+      } else {
+        nextParams.delete('q')
+      }
+      const nextQuery = nextParams.toString()
+      router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname)
+    }, 300)
+
+    return () => clearTimeout(handler)
+  }, [query, pathname, router, searchParams])
 
   return (
     <main className="mx-auto max-w-4xl px-6 py-12">

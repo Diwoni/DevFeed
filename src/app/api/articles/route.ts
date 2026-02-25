@@ -6,9 +6,10 @@ export async function GET(request: NextRequest) {
   const page = Number(searchParams.get('page') ?? '1')
   const limit = Number(searchParams.get('limit') ?? '10')
   const tagSlug = searchParams.get('tag') ?? undefined
+  const query = searchParams.get('q') ?? undefined
 
   try {
-    const items = await getArticles({ page, limit, tagSlug })
+    const items = await getArticles({ page, limit, tagSlug, query })
     const nextPage = items.length < limit ? null : page + 1
 
     return NextResponse.json({ items, nextPage })

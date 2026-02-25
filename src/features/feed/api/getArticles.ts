@@ -5,28 +5,41 @@ interface GetArticlesParams {
   page?: number
   limit?: number
   tagSlug?: string
+  query?: string
 }
 
 interface ArticleWithTagJoin extends Article {
   article_tags?: { tag: Tag }[]
 }
 
-export async function getArticles({ page = 1, limit = 10, tagSlug }: GetArticlesParams) {
+export async function getArticles({
+  page = 1,
+  limit = 10,
+  tagSlug,
+  query: searchQuery,
+}: GetArticlesParams) {
   const supabase = await createClient()
   const from = (page - 1) * limit
   const to = from + limit - 1
 
-  let query = supabase
+  let supabaseQuery = supabase
     .from('articles')
     .select('*, article_tags(tag:tags(*))')
     .order('published_at', { ascending: false })
     .range(from, to)
 
   if (tagSlug) {
-    query = query.eq('article_tags.tags.slug', tagSlug)
+    supabaseQuery = supabaseQuery.eq('article_tags.tags.slug', tagSlug)
   }
 
-  const { data, error } = await query
+  if (searchQuery) {
+    const keyword = `%${searchQuery}%`
+    supabaseQuery = supabaseQuery.or(
+      `title.ilike.${keyword},summary.ilike.${keyword},author.ilike.${keyword},article_tags.tag.name.ilike.${keyword}`
+    )
+  }
+
+  const { data, error } = await supabaseQuery
 
   if (error) {
     throw error
