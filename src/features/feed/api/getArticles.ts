@@ -34,9 +34,40 @@ export async function getArticles({
 
   if (searchQuery) {
     const keyword = `%${searchQuery}%`
-    supabaseQuery = supabaseQuery.or(
-      `title.ilike.${keyword},summary.ilike.${keyword},author.ilike.${keyword},article_tags.tag.name.ilike.${keyword}`
-    )
+    const matchedArticleIds = new Set<string>()
+
+    const [{ data: textMatches, error: textError }, { data: tagMatches, error: tagError }] =
+      await Promise.all([
+        supabase
+          .from('articles')
+          .select('id')
+          .or(`title.ilike.${keyword},summary.ilike.${keyword},author.ilike.${keyword}`),
+        supabase.from('tags').select('id').or(`name.ilike.${keyword},slug.ilike.${keyword}`),
+      ])
+
+    if (textError) throw textError
+    if (tagError) throw tagError
+
+    textMatches?.forEach((row) => matchedArticleIds.add(row.id))
+
+    const tagIds = tagMatches?.map((tag) => tag.id) ?? []
+    if (tagIds.length > 0) {
+      const { data: articleTagMatches, error: articleTagError } = await supabase
+        .from('article_tags')
+        .select('article_id')
+        .in('tag_id', tagIds)
+
+      if (articleTagError) throw articleTagError
+
+      articleTagMatches?.forEach((row) => matchedArticleIds.add(row.article_id))
+    }
+
+    const ids = [...matchedArticleIds]
+    if (ids.length === 0) {
+      return []
+    }
+
+    supabaseQuery = supabaseQuery.in('id', ids)
   }
 
   const { data, error } = await supabaseQuery
