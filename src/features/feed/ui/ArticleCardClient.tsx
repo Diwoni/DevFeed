@@ -1,13 +1,15 @@
+'use client'
+
 import Link from 'next/link'
 import type { ArticleWithTags } from '@/shared/types/database'
-import { SaveButton } from './SaveButton'
 import { SourceBadge } from '@/shared/ui/badge/SourceBadge'
+import { SaveButton } from './SaveButton'
 
-interface ArticleCardProps {
+interface ArticleCardClientProps {
   article: ArticleWithTags
 }
 
-export function ArticleCard({ article }: ArticleCardProps) {
+export function ArticleCardClient({ article }: ArticleCardClientProps) {
   return (
     <article className="flex flex-col gap-4 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
       <header className="flex items-center justify-between gap-4">
