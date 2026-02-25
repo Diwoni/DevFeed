@@ -9,16 +9,18 @@ interface ArticleCardProps {
 
 export function ArticleCard({ article }: ArticleCardProps) {
   return (
-    <article className="flex flex-col gap-4 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+    <article className="flex flex-col gap-4 rounded-[14px] border border-[var(--border)] bg-[var(--surface)] p-5 transition hover:-translate-y-0.5 hover:border-[var(--border-hover)] hover:shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
       <header className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <SourceBadge source={article.source} />
-          <span className="text-sm text-gray-500">{article.author ?? '작성자 미상'}</span>
+          <span className="text-sm text-[var(--foreground-secondary)]">
+            {article.author ?? '작성자 미상'}
+          </span>
         </div>
         <div className="flex items-center gap-2">
           <button
             type="button"
-            className="rounded-full border border-gray-200 px-2.5 py-1 text-[11px] font-semibold text-gray-600 transition hover:border-gray-300"
+            className="rounded-full border border-[var(--border)] bg-[var(--surface-muted)] px-2.5 py-1 text-[11px] font-semibold text-[var(--foreground-secondary)] transition hover:border-[var(--border-hover)]"
           >
             AI 요약
           </button>
@@ -27,13 +29,20 @@ export function ArticleCard({ article }: ArticleCardProps) {
       </header>
 
       <div className="space-y-2">
-        <h2 className="text-xl font-semibold text-gray-900">
-          <Link href={article.url} target="_blank" rel="noreferrer" className="hover:text-gray-700">
+        <h2 className="text-xl font-semibold text-[var(--foreground)]">
+          <Link
+            href={article.url}
+            target="_blank"
+            rel="noreferrer"
+            className="transition hover:text-[var(--foreground-secondary)]"
+          >
             {article.title}
           </Link>
         </h2>
         {article.summary && (
-          <p className="text-sm leading-relaxed text-gray-600">{article.summary}</p>
+          <p className="text-sm leading-relaxed text-[var(--foreground-secondary)]">
+            {article.summary}
+          </p>
         )}
       </div>
 
@@ -42,19 +51,21 @@ export function ArticleCard({ article }: ArticleCardProps) {
           {article.tags.map((tag) => (
             <span
               key={tag.id}
-              className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600"
+              className="rounded-md border border-[var(--border)] bg-[var(--surface-muted)] px-2.5 py-1 text-[11px] font-medium text-[var(--foreground-secondary)]"
             >
               {tag.name}
             </span>
           ))}
         </div>
-        <div className="flex items-center gap-3 text-xs text-gray-500">
-          <span>{article.reading_time}분</span>
+        <div className="flex items-center gap-3 text-xs text-[var(--foreground-secondary)]">
+          <span className="rounded-md bg-[var(--surface-muted)] px-2 py-1 font-mono text-[11px]">
+            {article.reading_time}분
+          </span>
           <Link
             href={article.url}
             target="_blank"
             rel="noreferrer"
-            className="rounded-full border border-gray-200 px-3 py-1 text-xs font-semibold text-gray-600 hover:border-gray-300 hover:text-gray-900"
+            className="rounded-full border border-[var(--border)] px-3 py-1 text-xs font-semibold text-[var(--foreground-secondary)] transition hover:border-[var(--border-hover)] hover:text-[var(--foreground)]"
           >
             원문 보기
           </Link>
