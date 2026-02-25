@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 
-// 서버 전용 어드민 클라이언트 — 절대 클라이언트 컴포넌트에서 import하지 말 것
+// 서버 전용 어드민 클라이언트 — 클라이언트 컴포넌트에서 import X
 export function createAdminClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY
