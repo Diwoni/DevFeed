@@ -104,6 +104,7 @@ async function parseDevTo(url: string): Promise<ParsedArticle[]> {
 
 export async function collectAllFeeds(): Promise<ParsedArticle[]> {
   const results = await Promise.allSettled([
+    // 모든 소스의 모든 URL을 병렬로 파싱, 실패한 건 넘김
     ...RSS_SOURCES[0].urls.map((url) => parseVelog(url)),
     ...RSS_SOURCES[1].urls.map((url) => parseDevTo(url)),
   ])
