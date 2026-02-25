@@ -17,11 +17,15 @@ export function ArticleCardClient({ article }: ArticleCardClientProps) {
           <SourceBadge source={article.source} />
           <span className="text-sm text-gray-500">{article.author ?? '작성자 미상'}</span>
         </div>
-        <span className="text-xs text-gray-400">
-          {article.published_at
-            ? new Date(article.published_at).toLocaleDateString('ko-KR')
-            : '날짜 미상'}
-        </span>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            className="rounded-full border border-gray-200 px-2.5 py-1 text-[11px] font-semibold text-gray-600 transition hover:border-gray-300"
+          >
+            AI 요약
+          </button>
+          <SaveButton articleId={article.id} />
+        </div>
       </header>
 
       <div className="space-y-2">
@@ -56,7 +60,6 @@ export function ArticleCardClient({ article }: ArticleCardClientProps) {
           >
             원문 보기
           </Link>
-          <SaveButton articleId={article.id} />
         </div>
       </footer>
     </article>
